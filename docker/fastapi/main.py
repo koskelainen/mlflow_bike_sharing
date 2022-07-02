@@ -23,10 +23,6 @@ best_model_uri = f"{best_run.info.artifact_uri}/model"
 model = load_model(best_model_uri)
 predictor = build_predictor(model)
 app = FastAPI()
-
-tmp = signature(predictor).return_annotation
-
-
 app.add_api_route(
     "/prediction",
     predictor,
