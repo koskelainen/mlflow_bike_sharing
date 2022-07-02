@@ -1,0 +1,8 @@
+mlflow>=1.27.0
+boto3>=1.24.21
+scikit-learn>=1.1.1
+psutil>=5.9.1
+fastapi>=0.73.0
+fastapi-mlflow>=0.1.2
+gunicorn>=20.1.0
+uvicorn>=0.18.2
