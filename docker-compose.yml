@@ -27,7 +27,7 @@ services:
   mlflow-server:
     <<: *service-template
     build:
-      context: ./src/dockerfiles/mlflow/
+      context: ./docker/mlflow/
       dockerfile: Dockerfile
     container_name: mlflow_server
     environment:
@@ -45,7 +45,7 @@ services:
   fast_api:
     <<: *service-template
     build:
-      context: ./src/dockerfiles/fastapi/
+      context: ./docker/fastapi/
       dockerfile: Dockerfile
     container_name: fast_api
     command: "gunicorn --timeout=60 -b 0.0.0.0:${MODEL_ENDPOINT_FAST_API_PORT} \ 
@@ -57,7 +57,7 @@ services:
   mlflow_api:
     <<: *service-template
     build:
-      context: ./src/dockerfiles/mlflow_api/
+      context: ./docker/mlflow_api/
       dockerfile: Dockerfile
     container_name: mlflow_api
     command: python main.py
