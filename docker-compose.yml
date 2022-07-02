@@ -1,0 +1,95 @@
+version: '3.8'
+
+x-template: &service-template
+  restart: always
+  env_file:
+    - .env
+  networks:
+    - data_lab
+
+networks:
+  data_lab:
+    driver: bridge
+
+services:
+  mlflow-db:
+    <<: *service-template
+    image: postgres:14.3
+    environment:
+      POSTGRES_DB: mlflowdb
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5436:5432"
+    volumes:
+      - ${PWD}/data/dc_volumes/pg:/var/lib/postgresql/data
+
+  mlflow-server:
+    <<: *service-template
+    build:
+      context: ./src/dockerfiles/mlflow/
+      dockerfile: Dockerfile
+    container_name: mlflow_server
+    environment:
+      AWS_REGION: eu-north-1
+      AWS_DEFAULT_REGION: eu-north-1
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: R9mTkRt4z
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    ports:
+      - "5555:5000"
+    command: "mlflow server --host 0.0.0.0 \
+              --backend-store-uri postgresql://mlflow:password@mlflow-db:5432/mlflowdb \
+              --default-artifact-root s3://mybucket/"
+
+  fast_api:
+    <<: *service-template
+    build:
+      context: ./src/dockerfiles/fastapi/
+      dockerfile: Dockerfile
+    container_name: fast_api
+    command: "gunicorn --timeout=60 -b 0.0.0.0:${MODEL_ENDPOINT_FAST_API_PORT} \ 
+                              -k uvicorn.workers.UvicornWorker \
+                              -w ${MODEL_ENDPOINT_FAST_API_WORKERS} -- main:app"
+    ports:
+      - "${MODEL_ENDPOINT_FAST_API_PORT}:${MODEL_ENDPOINT_FAST_API_PORT}"
+
+  mlflow_api:
+    <<: *service-template
+    build:
+      context: ./src/dockerfiles/mlflow_api/
+      dockerfile: Dockerfile
+    container_name: mlflow_api
+    command: python main.py
+    ports:
+      - "${MODEL_ENDPOINT_MLFLOW_API_PORT}:${MODEL_ENDPOINT_MLFLOW_API_PORT}"
+
+  minio:
+    <<: *service-template
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9020:9000"
+      - "9021:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: R9mTkRt4z
+      MINIO_SITE_REGION: eu-north-1
+    volumes:
+      - ${PWD}/data/dc_volumes/minio:/data
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    networks:
+      - data_lab
+    entrypoint: >
+      /bin/sh -c "
+      echo sleep 10;
+      sleep 10;
+      /usr/bin/mc config host add myminio http://minio:9000 admin R9mTkRt4z;
+      /usr/bin/mc mb myminio/mybucket;
+      /usr/bin/mc policy set public myminio/mybucket;
+      exit 0;
+      "
