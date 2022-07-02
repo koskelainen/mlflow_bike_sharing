@@ -1,0 +1,23 @@
+### POST request with parameter
+POST http://localhost:5001/prediction
+Content-Type: application/json
+
+[
+{
+  "season": 1, "year": 0, "month": 1, "hour_of_day": 0, "is_holiday": 1, "weekday": 0,
+  "is_workingday": 0, "weather_situation": 1, "temperature": 0.24,
+  "feels_like_temperature": 0.2671, "humidity": 0.81, "windspeed": 0.0000
+}
+]
+
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}

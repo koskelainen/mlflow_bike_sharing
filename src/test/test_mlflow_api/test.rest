@@ -1,0 +1,20 @@
+### POST request with parameter
+POST http://localhost:5005/invocations
+Content-Type: application/json
+
+{
+    "columns": ["season", "year", "month", "hour_of_day", "is_holiday", "weekday",
+      "is_workingday", "weather_situation", "temperature", "feels_like_temperature", "humidity", "windspeed"],
+    "data": [[1, 0, 1, 0, 1, 6, 0, 1, 0.24, 0.2671, 0.81, 0.0000]]
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}
