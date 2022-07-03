@@ -1,9 +1,10 @@
 [flake8]
-ignore = D203, E501
+ignore = D203, E501, E402
 exclude =
     .git,
+    .dvc,
     __pycache__,
-    old,
-    build,
-    dist,
+    data,
+    config,
+    models,
 max-complexity = 12
