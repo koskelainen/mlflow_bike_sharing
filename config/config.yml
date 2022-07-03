@@ -1,0 +1,74 @@
+base:
+  project: bike-sharing
+  name: bike-sharing
+  tags: [ bike-sharing-01-prototype, dev ]
+
+  model:
+    model_name: bike-sharing
+    models_folder:
+      - models
+
+  experiments:
+    experiments_folder:
+      - data
+      - experiments
+
+  mlflow:
+    EXPERIMENT_NAME: console-exp-02
+    AWS_REGION: eu-north-1
+    AWS_DEFAULT_REGION: eu-north-1
+    AWS_ACCESS_KEY_ID: admin
+    AWS_SECRET_ACCESS_KEY: R9mTkRt4z
+    MLFLOW_S3_ENDPOINT_URL: http://localhost:9020
+    MLFLOW_URL: http://localhost:5555
+
+template_train: &template_train
+  random_state: 42
+  test_size: 0.3
+
+template_dataset: &template_dataset
+  origin_dataset_csv: data/raw/hour.csv
+  dataset_csv: data/processed/hour.csv
+
+prepare_dataset:
+  <<: *template_dataset
+  <<: *template_train
+  dataset_rename_mapper:
+    atemp: feels_like_temperature
+    cnt: rented_bikes
+    holiday: is_holiday
+    hr: hour_of_day
+    hum: humidity
+    mnth: month
+    temp: temperature
+    weathersit: weather_situation
+    workingday: is_workingday
+    yr: year
+  drop_columns:
+    - instant
+    - dteday
+    - registered
+    - casual
+
+split_train_test:
+  <<: *template_dataset
+  <<: *template_train
+  target_column: rented_bikes
+  folder:
+    - data
+    - experiments
+  x_train_csv: data/processed/x_train_bike.csv
+  x_test_csv: data/processed/x_test_bike.csv
+  y_train_csv: data/processed/y_train_bike.csv
+  y_test_csv: data/processed/y_test_bike.csv
+
+train:
+  estimators:
+    gbrt: #GBRT (Gradient Boosted Regression Tree) scikit-learn implementation
+      param_grid: # params of GridSearchCV constructor
+        learning_rate: [ 0.1, 0.05, 0.01 ]
+        max_depth: [ 4, 5, 6 ]
+
+model_select:
+  <<: *template_train
+  sort_of_metrics: metrics.RMSE_CV ASC
