@@ -1,0 +1,50 @@
+stages:
+  prepare_configs:
+    cmd: python src/pipelines/prepare_configs.py --config=config/config.yml
+    deps:
+    - config/config.yml
+    - src/pipelines/prepare_configs.py
+    outs:
+    - data/experiments/base_config.yml
+    - data/experiments/model_select_config.yml
+    - data/experiments/prepare_dataset_config.yml
+    - data/experiments/split_train_test_config.yml
+    - data/experiments/train_config.yml
+  prepare_dataset:
+    cmd: python src/pipelines/prepare_dataset.py --config=data/experiments/prepare_dataset_config.yml
+    deps:
+    - data/experiments/prepare_dataset_config.yml
+    - data/raw/hour.csv
+    - src/pipelines/prepare_dataset.py
+    outs:
+    - data/processed/hour.csv
+  split_dataset:
+    cmd: python src/pipelines/split_train_test.py --config=data/experiments/split_train_test_config.yml
+    deps:
+    - data/experiments/split_train_test_config.yml
+    - data/processed/hour.csv
+    - src/pipelines/split_train_test.py
+    outs:
+    - data/processed/x_test_bike.csv
+    - data/processed/x_train_bike.csv
+    - data/processed/y_test_bike.csv
+    - data/processed/y_train_bike.csv
+  train:
+    cmd: python src/pipelines/train.py --config=data/experiments/train_config.yml
+      --base_config=config/config.yml
+    deps:
+    - data/experiments/train_config.yml
+    - data/processed/x_test_bike.csv
+    - data/processed/x_train_bike.csv
+    - data/processed/y_test_bike.csv
+    - data/processed/y_train_bike.csv
+    - src/pipelines/train.py
+  model_select:
+    cmd: python src/pipelines/model_select.py --config=data/experiments/model_select_config.yml
+      --base_config=config/config.yml
+    deps:
+    - config/config.yml
+    - data/experiments/model_select_config.yml
+    - src/pipelines/model_select.py
+    outs:
+    - models/model.pkl
