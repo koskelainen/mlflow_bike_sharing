@@ -56,6 +56,20 @@ confirm:
 lint: ## Lint using flake8
 	flake8 src
 
+.PHONY: dirs
+dirs: ## Create directories that are ignored by git but required for the project
+	mkdir -p data/raw data/processed data/dc_volumes data/experiments models
+
+.PHONY: dataset
+dataset: ## Download Bike Sharing Dataset
+	wget -P data/raw/ "http://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip"
+	cd data/raw/ && unzip -o "Bike-Sharing-Dataset.zip" && cd ${ROOT_DIR}
+
+.PHONY: dvcrun
+dvcrun: ## Start evaluate dvc pipeline
+	dvc repro
+
+
 .PHONY: help
 help: ## Show help
 	@echo Please specify a build target. The choices are:
