@@ -57,7 +57,8 @@ lint: ## Lint using flake8
 	flake8 src
 
 .PHONY: dirs
-dirs: ## Create directories that are ignored by git but required for the project
+dirs: ## Create symlink and directories that are ignored by git but required for the project
+	ln -sf config/.env
 	mkdir -p data/raw data/processed data/dc_volumes data/experiments models
 
 .PHONY: dataset
@@ -70,7 +71,7 @@ dvcrun: ## Start dvc pipline
 	dvc repro
 
 .PHONY: demo
-demo: dataset start dvcrun ## Just run all steps prepare, get model and run api endpoints
+demo: dataset dirs start dvcrun ## Just run all steps prepare, get model and run api endpoints
 
 
 .PHONY: help

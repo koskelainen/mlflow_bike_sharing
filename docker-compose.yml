@@ -3,7 +3,7 @@ version: '3.8'
 x-template: &service-template
   restart: always
   env_file:
-    - config/.env
+    - .env
   networks:
     - data_lab
 
