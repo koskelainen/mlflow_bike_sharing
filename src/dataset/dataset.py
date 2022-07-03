@@ -18,4 +18,3 @@ def data_preprocessing(dataset: DataFrame, drop_columns: list, dataset_rename_ma
     dataset = remove_unused_columns(dataset=dataset, columns=drop_columns)
     dataset = rename_columns(dataset=dataset, mapper=dataset_rename_mapper)
     return dataset
-
