@@ -14,18 +14,25 @@ Directory Structure
     ├── models  <- compiled model .pkl and other model's files
     └── src
         ├── config <- configure from pipline
-        ├── constants <- constants from pipeline
         ├── dataset <- data prepare and/or preprocess
-        ├── evaluate <- evaluating model stage code 
         ├── feauture <- impotant features visualization 
+        ├── mlflow_client <- set/run mlflow clint 
         ├── pipelines <- scripts of pipelines
         ├── test <- smoke test for mlfow, mlfow_api and fast_api
         ├── train <- train model stage code
-        └── utils.py <- auxiliary functions and utils
+        └── utils <- auxiliary functions and utils
 
 - **Dateset:** Bike Sharing Dataset: http://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
 - **Goal:** predict `rented_bikes` (count per hour) based on weather and time information.
 
+
+### 1. Run demo
+
+Just run all steps prepare, get model and run api endpoints 
+
+```bash
+make demo
+```
 
 ### 1. Get data
 
@@ -33,9 +40,25 @@ Download Bike Sharing Dataset
 
 ```bash
 make dataset
-```         
+```
 
-### Step 2: Automate pipelines (DAG) execution
+### 2. Build and run docker containers 
+
+Build and run containers from docker-compose.yml
+
+```bash
+make start
+```
+
+### 3. Run dvc pipline
+
+Run dvc pipeline with all stepc to dvc.yaml
+
+```bash
+make dvcrun
+```     
+
+### Step 4: Automate pipelines (DAG) execution
 
 __1) Prepare configs__
 

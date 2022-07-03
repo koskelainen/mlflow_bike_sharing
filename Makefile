@@ -66,8 +66,11 @@ dataset: ## Download Bike Sharing Dataset
 	cd data/raw/ && unzip -o "Bike-Sharing-Dataset.zip" && cd ${ROOT_DIR}
 
 .PHONY: dvcrun
-dvcrun: ## Start evaluate dvc pipeline
+dvcrun: ## Start dvc pipline
 	dvc repro
+
+.PHONY: demo
+demo: dataset start dvcrun ## Just run all steps prepare, get model and run api endpoints
 
 
 .PHONY: help
