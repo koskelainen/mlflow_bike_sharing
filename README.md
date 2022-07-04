@@ -157,3 +157,25 @@ this stage:
 1) trains and save model 
 
 Reproduce stage: `dvc repro model_select`
+
+
+### REST API check
+
+1) Check fast api
+
+```shell
+curl --silent --show-error 'http://0.0.0.0:5005/invocations' -H 'Content-Type: application/json' -d '{
+    "columns": ["season", "year", "month", "hour_of_day", "is_holiday", "weekday", "is_workingday", "weather_situation", "temperature", "feels_like_temperature", "humidity", "windspeed"],
+    "data": [[1, 0, 1, 0, 1, 6, 0, 1, 0.24, 0.2671, 0.81, 0.0000]]
+}'
+```
+
+2) Check mlflow api 
+
+```shell
+curl --silent --show-error 'http://localhost:5001/prediction' -H 'Content-Type: application/json' -d '[{
+  "season": 1, "year": 0, "month": 1, "hour_of_day": 0, "is_holiday": 1, "weekday": 0,
+  "is_workingday": 0, "weather_situation": 1, "temperature": 0.24,
+  "feels_like_temperature": 0.2671, "humidity": 0.81, "windspeed": 0.0000
+}]'
+```
