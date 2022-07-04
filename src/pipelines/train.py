@@ -6,8 +6,8 @@ import warnings
 from typing import Text
 
 import mlflow
-import numpy as np
 from mlflow.models.signature import infer_signature
+from numpy import sqrt
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold, cross_val_score
 
@@ -22,13 +22,13 @@ from src.mlflow_client.client import set_mlflow_client
 
 
 def rmse(y, y_pred):
-    return np.sqrt(mean_squared_error(y, y_pred))
+    return sqrt(mean_squared_error(y, y_pred))
 
 
 def rmsle_cv(model, X_train, y_train, random_state):
     """calculate a score by cross-validation"""
     kf = KFold(n_splits=3, shuffle=True, random_state=random_state).get_n_splits(X_train.values)
-    return np.sqrt(-cross_val_score(model, X_train.values, y_train, scoring="neg_mean_squared_error", cv=kf))
+    return sqrt(-cross_val_score(model, X_train.values, y_train, scoring="neg_mean_squared_error", cv=kf))
 
 
 def training_grid_search(config_path: Text, base_config_path: Text):
@@ -78,8 +78,8 @@ def training_grid_search(config_path: Text, base_config_path: Text):
             score_cv = rmsle_cv(model, X_train, y_train, random_state)
 
             # generate charts
-            model_feature_importance(model, X_train, path_to_models)
-            model_permutation_importance(model, X_train, X_test, y_test, path_to_models)
+            model_feature_importance(model, X_train, path_feature_importance)
+            model_permutation_importance(model, X_train, X_test, y_test, path_permutation_importance)
 
             # get model signature
             signature = infer_signature(model_input=X_train, model_output=model.predict(X_train))
