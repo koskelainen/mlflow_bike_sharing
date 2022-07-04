@@ -29,7 +29,6 @@ services:
     build:
       context: ./docker/mlflow/
       dockerfile: Dockerfile
-#    container_name: mlflow_server
     environment:
       AWS_REGION: eu-north-1
       AWS_DEFAULT_REGION: eu-north-1
@@ -47,7 +46,6 @@ services:
     build:
       context: ./docker/fastapi/
       dockerfile: Dockerfile
-#    container_name: fast_api
     command: "gunicorn --timeout=60 -b 0.0.0.0:${MODEL_ENDPOINT_FAST_API_PORT} \ 
                               -k uvicorn.workers.UvicornWorker \
                               -w ${MODEL_ENDPOINT_FAST_API_WORKERS} -- main:app"
@@ -59,7 +57,6 @@ services:
     build:
       context: ./docker/mlflow_api/
       dockerfile: Dockerfile
-#    container_name: mlflow_api
     command: python main.py
     ports:
       - "${MODEL_ENDPOINT_MLFLOW_API_PORT}:${MODEL_ENDPOINT_MLFLOW_API_PORT}"
