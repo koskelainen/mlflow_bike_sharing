@@ -31,6 +31,8 @@ Directory Structure
 Just run all steps prepare, get model and run api endpoints 
 
 ```bash
+make venv
+source ./venv/bin/activate
 make demo
 ```
 
