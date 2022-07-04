@@ -3,6 +3,30 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKER_COMPOSE := docker-compose
 DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yml
 
+VENV_NAME := venv
+VENV_PATH := ${ROOT_DIR}/${VENV_NAME}
+
+# Variable for the python command (later overwritten if not working)
+PYTHON_INTERPRETER := python
+
+# Get version string (e.g. Python 3.7.1)
+PYTHON_VERSION_STRING := $(shell $(PYTHON_INTERPRETER) -V)
+
+# If PYTHON_VERSION_STRING is empty there probably isn't any 'python'
+# on PATH, and you should try set it using 'python3' (or python2) instead.
+ifndef PYTHON_VERSION_STRING
+    PYTHON_INTERPRETER := python3
+    PYTHON_VERSION_STRING := $(shell $(PYTHON_INTERPRETER) -V)
+	ifndef PYTHON_VERSION_STRING
+		$(error No python interpreter found on PATH)
+	endif
+endif
+
+# Split components (changing "." into " ")
+PYTHON_VERSION_TOKENS := $(subst ., ,$(PYTHON_VERSION_STRING)) # Python 3 7 1
+PYTHON_MAJOR_VERSION := $(word 2,$(PYTHON_VERSION_TOKENS)) # 3
+PYTHON_MINOR_VERSION := $(word 3,$(PYTHON_VERSION_TOKENS)) # 4
+
 
 .DEFAULT_GOAL := help
 
@@ -68,11 +92,21 @@ dataset: ## Download Bike Sharing Dataset
 
 .PHONY: dvcrun
 dvcrun: ## Start dvc pipline
-	dvc repro
+	dvc repro -f
+
+.PHONY: venv
+venv: ## Create virtualenv and ctivate it
+	$(PYTHON_INTERPRETER) -m venv ${VENV_PATH}
+	@echo Activate with the command:
+	@echo source ./${VENV_NAME}/bin/activate
+
+.PHONY: requirements
+requirements: ## Install Python Dependencies. Make sure you activate the virtualenv first!
+	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 .PHONY: demo
-demo: dataset dirs start dvcrun ## Just run all steps prepare, get model and run api endpoints
-
+demo: dirs requirements dataset start dvcrun ## Just run all steps prepare, get model and run api endpoints
 
 .PHONY: help
 help: ## Show help
