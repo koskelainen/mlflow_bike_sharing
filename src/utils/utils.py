@@ -1,3 +1,4 @@
+import logging
 import pathlib
 from os import remove
 from typing import Text, Union
@@ -5,6 +6,8 @@ from typing import Text, Union
 import pandas
 import yaml
 from pandas import DataFrame
+
+logger = logging.getLogger()
 
 
 def get_root_dir() -> pathlib.Path:
@@ -42,4 +45,4 @@ def remove_file(file_path: Union[Text, pathlib.Path]) -> None:
     if file_path.exists():
         remove(file_path)
     else:
-        print(f"File: {file_path} not found!")
+        logger.debug(f"File: {file_path} not found!")
