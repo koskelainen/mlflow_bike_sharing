@@ -92,7 +92,11 @@ dataset: ## Download Bike Sharing Dataset
 
 .PHONY: dvcrun
 dvcrun: ## Start dvc pipline
-	dvc repro -f
+	dvc repro prepare_configs -f
+	dvc repro prepare_dataset -f
+	dvc repro split_dataset -f
+	dvc repro train -f
+	dvc repro model_select -f
 
 .PHONY: venv
 venv: ## Create virtualenv and ctivate it
