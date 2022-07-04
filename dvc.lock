@@ -86,8 +86,8 @@ stages:
       md5: 41d2eeac2feafa5045a5504a13177b69
       size: 42556
     - path: src/pipelines/train.py
-      md5: 965831975c8975c47fc8f4cffa99e3cf
-      size: 4810
+      md5: 1561443525b6b29d110c9448a8f5d018
+      size: 4830
   model_select:
     cmd: python src/pipelines/model_select.py --config=data/experiments/model_select_config.yml
       --base_config=config/config.yml
@@ -103,5 +103,5 @@ stages:
       size: 1656
     outs:
     - path: models/model.pkl
-      md5: 7973173538d9354f7cb526ae30cb0f02
+      md5: 51a41a8e8262d63eaa98bb73526af045
       size: 1053
