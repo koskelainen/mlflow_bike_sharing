@@ -26,7 +26,7 @@ Directory Structure
 - **Goal:** predict `rented_bikes` (count per hour) based on weather and time information.
 
 
-### 1. Run demo
+### Run demo
 
 Just run all steps prepare, get model and run api endpoints 
 
